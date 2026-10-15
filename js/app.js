@@ -387,7 +387,7 @@ function loadQuestions() {
 }   
 
 async function handleNextClick() {
-   if (selectedAnswerIndex === null) {
+    if (selectedAnswerIndex === null) {
         alert("Bitte wählen Sie zuerst eine Antwort aus!");
         return;
     }
@@ -438,37 +438,15 @@ async function handleNextClick() {
         } else {
             stopPureDrumLoop(); 
             
-            // 1. Score in die Cloud speichern für den aktuellen Raum
+            // 1. Runden-Code absolut frisch aus dem Eingabefeld sichern
             updateRoomFromInput();
+            
+            // 2. Score in die Cloud schreiben
             await saveScoreToCloud(player.name, player.score, player.level, player.theme, player.room);
             
+            // 3. Auf Quell-Markierung setzen und Podest direkt anzeigen
             leaderboardSource = 'quiz'; 
-
-            // 2. Elemente für den Abschluss-Screen anpassen (ohne den Textbereich zu verstecken)
-            const questionHtml = document.getElementById('question');
-            const answerSection = document.getElementById('answerSection');
-            const timerEl = document.getElementById('timer');
-            const subtitleEl = document.getElementById('category-subtitle');
-            const jokerBtn = document.getElementById('joker-btn');
-            
-            if (subtitleEl) subtitleEl.textContent = "Runde abgeschlossen!";
-            
-            if (questionHtml) {
-                questionHtml.innerHTML = `🎉 Super gemacht, ${player.name}!<br><br>Du hast <strong>${player.score} Punkte</strong> in Raum <em>${player.room.toUpperCase()}</em> erreicht.`;
-            }
-            
-            if (answerSection) {
-                answerSection.innerHTML = `
-                    <button type="button" class="startReturn-btn" onclick="showLeaderboard(player.level, player.theme)" style="margin-top: 10px;">
-                        PODEST FÜR RAUM ${player.room.toUpperCase()} ANZEIGEN
-                    </button>
-                `;
-            }
-            
-            // Nur Timer, Joker und Weiter-Button verstecken, damit der Text lesbar bleibt
-            if (timerEl) timerEl.style.display = 'none';
-            if (jokerBtn) jokerBtn.style.display = 'none';
-            if (nextBtn) nextBtn.style.display = 'none';
+            showLeaderboard(player.level, player.theme); 
         }
     }, 1500); 
 }

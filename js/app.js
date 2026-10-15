@@ -387,7 +387,7 @@ function loadQuestions() {
 }   
 
 async function handleNextClick() {
-    if (selectedAnswerIndex === null) {
+   if (selectedAnswerIndex === null) {
         alert("Bitte wählen Sie zuerst eine Antwort aus!");
         return;
     }
@@ -444,16 +444,19 @@ async function handleNextClick() {
             
             leaderboardSource = 'quiz'; 
 
-            // 2. Warten- / Zusammenfassungs-Screen anzeigen, damit man manuell das Podest lädt, wenn alle fertig sind
+            // 2. Elemente für den Abschluss-Screen anpassen (ohne den Textbereich zu verstecken)
             const questionHtml = document.getElementById('question');
             const answerSection = document.getElementById('answerSection');
             const timerEl = document.getElementById('timer');
             const subtitleEl = document.getElementById('category-subtitle');
+            const jokerBtn = document.getElementById('joker-btn');
             
             if (subtitleEl) subtitleEl.textContent = "Runde abgeschlossen!";
+            
             if (questionHtml) {
                 questionHtml.innerHTML = `🎉 Super gemacht, ${player.name}!<br><br>Du hast <strong>${player.score} Punkte</strong> in Raum <em>${player.room.toUpperCase()}</em> erreicht.`;
             }
+            
             if (answerSection) {
                 answerSection.innerHTML = `
                     <button type="button" class="startReturn-btn" onclick="showLeaderboard(player.level, player.theme)" style="margin-top: 10px;">
@@ -461,12 +464,11 @@ async function handleNextClick() {
                     </button>
                 `;
             }
-            if (timerEl && timerEl.parentElement) {
-                timerEl.parentElement.style.display = 'none';
-            }
-            if (nextBtn) {
-                nextBtn.style.display = 'none';
-            }
+            
+            // Nur Timer, Joker und Weiter-Button verstecken, damit der Text lesbar bleibt
+            if (timerEl) timerEl.style.display = 'none';
+            if (jokerBtn) jokerBtn.style.display = 'none';
+            if (nextBtn) nextBtn.style.display = 'none';
         }
     }, 1500); 
 }

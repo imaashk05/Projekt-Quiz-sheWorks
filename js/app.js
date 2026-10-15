@@ -127,6 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const viewStart = document.getElementById('view-start');
     const viewQuiz = document.getElementById('view-quiz');
     const viewToplist = document.getElementById('viewToplist');
+    const viewWaiting = document.getElementById('view-waiting'); // Warteraum-Ansicht
 
     const soundBtn = document.getElementById('sound-btn');
     if (soundBtn) {
@@ -190,6 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (viewStart) viewStart.classList.add('hidden');
             if (viewQuiz) viewQuiz.classList.remove('hidden');
             if (viewToplist) viewToplist.classList.add('hidden');
+            if (viewWaiting) viewWaiting.classList.add('hidden');
 
             playPureDrumBeat();
             startQuiz();
@@ -207,6 +209,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (viewStart) viewStart.classList.add('hidden');
             showLeaderboard(player.level || 'touri', player.theme || 'geschichte');
+        });
+    }
+
+    // Klick-Listener für den Podest-Button im Warteraum
+    const showPodiumBtn = document.getElementById('show-podium-btn');
+    if (showPodiumBtn) {
+        showPodiumBtn.addEventListener('click', () => {
+            leaderboardSource = 'quiz';
+            if (viewWaiting) viewWaiting.classList.add('hidden');
+            showLeaderboard(player.level, player.theme);
         });
     }
 
@@ -438,39 +450,31 @@ async function handleNextClick() {
         } else {
             stopPureDrumLoop(); 
             
-            // 1. Runden-Code frisch holen und Score im Hintergrund speichern
+            // 1. Runden-Code frisch holen und Score in die Cloud speichern
             updateRoomFromInput();
             saveScoreToCloud(player.name, player.score, player.level, player.theme, player.room)
                 .catch(err => console.log("Fehler beim Speichern:", err));
             
-            // 2. WARTEN-BILDSCHIRM ANZEIGEN (Anstatt sofort das Podest zu zeigen!)
-            const questionEl = document.getElementById('question');
-            const answerSection = document.getElementById('answerSection');
-            const timerEl = document.getElementById('timer');
-            const subtitleEl = document.getElementById('category-subtitle');
-            const jokerBtn = document.getElementById('joker-btn');
-
-            if (subtitleEl) subtitleEl.textContent = "Runde beendet!";
+            // 2. Ansichten wechseln: Quiz ausblenden, Warteraum einblenden
+            const viewQuiz = document.getElementById('view-quiz');
+            const viewWaiting = document.getElementById('view-waiting');
             
-            if (questionEl) {
-                questionEl.innerHTML = `🎉 Super gemacht, <strong>${player.name}</strong>!<br><br>Du hast <strong>${player.score} Punkte</strong> in Raum <em>${player.room.toUpperCase()}</em> erreicht.<br><br><span style="font-size: 14px; color: #ffe375;">Warte, bis alle Mitspieler fertig sind, und klicke dann auf den Button:</span>`;
+            if (viewQuiz) viewQuiz.classList.add('hidden');
+            if (viewWaiting) viewWaiting.classList.remove('hidden');
+
+            // 3. Nachrichten im Warteraum setzen
+            const waitMessage = document.getElementById('wait-message');
+            const showPodiumBtn = document.getElementById('show-podium-btn');
+
+            if (waitMessage) {
+                waitMessage.innerHTML = `🎉 Super gemacht, <strong>${player.name}</strong>!<br><br>` +
+                    `Du hast <strong>${player.score} Punkte</strong> in Raum <em>${player.room.toUpperCase()}</em> erreicht.<br><br>` +
+                    `<span style="font-size: 13px; color: #ffe375;">Warte, bis alle Mitspieler fertig sind, und klicke dann auf den Button:</span>`;
             }
 
-            // Wir ersetzen die Antwort-Buttons durch einen großen "Podest anzeigen"-Button
-            if (answerSection) {
-                answerSection.innerHTML = `
-                    <button type="button" class="startReturn-btn" onclick="leaderboardSource='quiz'; showLeaderboard(player.level, player.theme);" style="width: 100%; padding: 15px; font-size: 16px; background-color: #ffcc00; color: #000; font-weight: bold; border-radius: 8px; cursor: pointer;">
-                        🏆 PODEST FÜR RAUM ${player.room.toUpperCase()} ANZEIGEN
-                    </button>
-                `;
+            if (showPodiumBtn) {
+                showPodiumBtn.textContent = `🏆 PODEST FÜR RAUM ${player.room.toUpperCase()} ANZEIGEN`;
             }
-
-            // Timer, Joker und Weiter-Button komplett ausblenden
-            if (timerEl && timerEl.parentElement) {
-                timerEl.parentElement.style.display = 'none';
-            }
-            if (jokerBtn) jokerBtn.style.display = 'none';
-            if (nextBtn) nextBtn.style.display = 'none';
         }
     }, 1500); 
 }

@@ -437,10 +437,36 @@ async function handleNextClick() {
             loadQuestions();  
         } else {
             stopPureDrumLoop(); 
+            
+            // 1. Score in die Cloud speichern für den aktuellen Raum
             updateRoomFromInput();
             await saveScoreToCloud(player.name, player.score, player.level, player.theme, player.room);
+            
             leaderboardSource = 'quiz'; 
-            showLeaderboard(player.level, player.theme); 
+
+            // 2. Warten- / Zusammenfassungs-Screen anzeigen, damit man manuell das Podest lädt, wenn alle fertig sind
+            const questionHtml = document.getElementById('question');
+            const answerSection = document.getElementById('answerSection');
+            const timerEl = document.getElementById('timer');
+            const subtitleEl = document.getElementById('category-subtitle');
+            
+            if (subtitleEl) subtitleEl.textContent = "Runde abgeschlossen!";
+            if (questionHtml) {
+                questionHtml.innerHTML = `🎉 Super gemacht, ${player.name}!<br><br>Du hast <strong>${player.score} Punkte</strong> in Raum <em>${player.room.toUpperCase()}</em> erreicht.`;
+            }
+            if (answerSection) {
+                answerSection.innerHTML = `
+                    <button type="button" class="startReturn-btn" onclick="showLeaderboard(player.level, player.theme)" style="margin-top: 10px;">
+                        PODEST FÜR RAUM ${player.room.toUpperCase()} ANZEIGEN
+                    </button>
+                `;
+            }
+            if (timerEl && timerEl.parentElement) {
+                timerEl.parentElement.style.display = 'none';
+            }
+            if (nextBtn) {
+                nextBtn.style.display = 'none';
+            }
         }
     }, 1500); 
 }

@@ -422,7 +422,7 @@ async function handleNextClick() {
     
     updateStatus();
 
-    setTimeout(async () => {
+    setTimeout(() => {
         player.currentQuestionIndex++;
         selectedAnswerIndex = null;
 
@@ -438,15 +438,39 @@ async function handleNextClick() {
         } else {
             stopPureDrumLoop(); 
             
-            // 1. Runden-Code absolut frisch aus dem Eingabefeld sichern
+            // 1. Runden-Code frisch holen und Score im Hintergrund speichern
             updateRoomFromInput();
+            saveScoreToCloud(player.name, player.score, player.level, player.theme, player.room)
+                .catch(err => console.log("Fehler beim Speichern:", err));
             
-            // 2. Score in die Cloud schreiben
-            await saveScoreToCloud(player.name, player.score, player.level, player.theme, player.room);
+            // 2. WARTEN-BILDSCHIRM ANZEIGEN (Anstatt sofort das Podest zu zeigen!)
+            const questionEl = document.getElementById('question');
+            const answerSection = document.getElementById('answerSection');
+            const timerEl = document.getElementById('timer');
+            const subtitleEl = document.getElementById('category-subtitle');
+            const jokerBtn = document.getElementById('joker-btn');
+
+            if (subtitleEl) subtitleEl.textContent = "Runde beendet!";
             
-            // 3. Auf Quell-Markierung setzen und Podest direkt anzeigen
-            leaderboardSource = 'quiz'; 
-            showLeaderboard(player.level, player.theme); 
+            if (questionEl) {
+                questionEl.innerHTML = `🎉 Super gemacht, <strong>${player.name}</strong>!<br><br>Du hast <strong>${player.score} Punkte</strong> in Raum <em>${player.room.toUpperCase()}</em> erreicht.<br><br><span style="font-size: 14px; color: #ffe375;">Warte, bis alle Mitspieler fertig sind, und klicke dann auf den Button:</span>`;
+            }
+
+            // Wir ersetzen die Antwort-Buttons durch einen großen "Podest anzeigen"-Button
+            if (answerSection) {
+                answerSection.innerHTML = `
+                    <button type="button" class="startReturn-btn" onclick="leaderboardSource='quiz'; showLeaderboard(player.level, player.theme);" style="width: 100%; padding: 15px; font-size: 16px; background-color: #ffcc00; color: #000; font-weight: bold; border-radius: 8px; cursor: pointer;">
+                        🏆 PODEST FÜR RAUM ${player.room.toUpperCase()} ANZEIGEN
+                    </button>
+                `;
+            }
+
+            // Timer, Joker und Weiter-Button komplett ausblenden
+            if (timerEl && timerEl.parentElement) {
+                timerEl.parentElement.style.display = 'none';
+            }
+            if (jokerBtn) jokerBtn.style.display = 'none';
+            if (nextBtn) nextBtn.style.display = 'none';
         }
     }, 1500); 
 }

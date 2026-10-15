@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="stylesheet" href="./css/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linz - Quiz</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+    <audio id="bg-audio" src="./audio/sound.mp3" loop></audio>
+    <header>
+        <div id="brand">
+            <div id="circle"> L </div>
+            <div id="logo-text">
+                <h2> LINZ &middot; QUIZ </h2>
+                <p> Stadt &middot; WISSEN &middot; ZUKUNFT</p>
+            </div>
+        </div>
+        <button id="sound-btn" type="button">&#9834;</button>
+    </header>                       
+    <main>
+        <section id="view-start">
+            <div id="main-text">
+                <h1> Willkommen in Linz</h1>
+                <p> Wie gut kennen Sie unsere Stadt ?</p>
+                <div style="margin-top: 12px; font-size: 0.85rem; color: #ffe375; opacity: 0.9;">
+                    Runden-Code: <input type="text" id="roomCode" value="runde1" required style="background: none; color: #ffe374; padding: 1.5px 8px; border-radius: 4px; font-size: 0.85rem; width: 90px; text-align: center; text-transform: uppercase; outline: none; margin-left: 5px;">
+                </div>
+            </div>
+            <form>
+                <label for="name"> IHR NAME </label>
+                <input type="text" id="name" name="name" placeholder="z.B. Amina Amrieva">
+
+                <label> THEMA </label>
+                <div id="themeSelection-div">
+                    <label class="Selection">
+                        <input type="radio" name="theme" value="geschichte" required>
+                        Stadt &amp; Geschichte
+                    </label>
+                    <label class="Selection">   
+                        <input type="radio" name="theme" value="kultur" required>
+                        Kultur &amp; Wissenschaft
+                    </label>
+                    <label class="Selection" id="lastSelect">
+                        <input type="radio" name="theme" value="verwaltung" required>
+                        Stadt &amp; Verwaltung
+                    </label>
+                </div>
+                <label> SCHWIERIGKEIT </label>
+                <div id="levelSelection">
+                    <label class="Selection">
+                        <input type="radio" name="level" value="touri" required>
+                        Touri <br><small>&times;1</small>
+                    </label>
+                    <label class="Selection">
+                        <input type="radio" name="level" value="linzer" required>
+                        Linzer <br><small>&times;1,5</small>
+                    </label>
+                    <label class="Selection">
+                        <input type="radio" name="level" value="bürgermeister" required>
+                        Bürgermeister <br><small>&times;2</small>
+                    </label>
+                </div>                         
+                <button type="submit" class="startReturn-btn"> QUIZ STARTEN </button>
+                <button type="button" id="topList"> BESTENLISTE ANSEHEN </button>
+            </form>
+          <!-- QR-Code über stabile Bild-API (funktioniert immer & wird nie blockiert) -->
+            <div style="margin-top: 20px; text-align: center;">
+                <p style="font-size: 0.8rem; margin-bottom: 5px; opacity: 0.7; color: white;">Mit Handy scannen:</p>
+                <div style="display: inline-block; background: white; padding: 6px; border-radius: 4px;">
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=https%3A%2F%2Fimaashk05.github.io%2FProjekt-Quiz-sheWorks%2Findex.html" alt="QR-Code zum Mitspielen" width="100" height="100" style="display: block;">
+                </div>
+            </div>
+        </section>
+        <section id="view-quiz" class="hidden">
+            <div id="quiz-status-bar">
+                <p> FRAGE <strong> 1 </strong>/ 15</p>
+                <p><strong>0</strong> Punkte</p>
+            </div>
+            <div class="progress-container">
+                <div id="progress-bar"></div>
+            </div>
+            <div id="main-text">
+                <div id="timer">
+                    <p> 17 </p>
+                </div>
+                <p id="category-subtitle"> Stadt &amp; Geschichte</p>
+                <h3 id="question"> Wie heißt das berühmte, futuristische Museum direkt an der Donau in Linz? </h3>
+                <button type="button" id="joker-btn"><em>Joker</em></button>
+            </div>
+            <div id="answerSection">
+                <button class="answer-btn" type="button"> 
+                    <span class="letterCircle">A</span>Ars Electronica Center
+                </button>
+                <button class="answer-btn" type="button"> 
+                    <span class="letterCircle">B</span>Lentos Kunstmuseum
+                </button>
+                <button class="answer-btn" type="button"> 
+                    <span class="letterCircle">C</span>Schlossmuseum Linz
+                </button>
+                <button class="answer-btn" type="button">
+                     <span class="letterCircle">D</span> Nordico Stadtmuseum
+                </button>
+            </div>
+            <div id="footer">
+                <p id="timeOut" style="display: none;"> Zeit abgelaufen </p>
+                <button id="next-btn" type="button"> WEITER</button>
+            </div>
+        </section>
+        <section id="viewToplist" class="hidden">
+            <div id="main-text">
+                <h1> Bestenliste</h1>
+                <p id="category-subtitle">Die besten Linzer Köpfe je Level</p>
+            </div>
+            <div id="podiumLevels">
+                <button class="level" type="button">TOURI</button>
+                <button class="level sel" type="button">LINZER</button>
+                <button class="level" type="button">BÜRGERMEISTER</button>
+            </div>
+            <div id="podiumContainer">
+                <div class="place" id="p2">
+                   <p class="nameChar"> T </p>
+                   <p class="name">Thomas Gruber</p>
+                   <p class="points"> 1.320 <span> Punkte</span></p>
+                   <div class="podiumPlace"> 2 </div>
+                </div>
+                <div class="place"  id="p1">
+                   <p class="nameChar"> M </p>
+                   <p class="name"> Thomas Gruber</p>
+                   <p class="points"> 1.520 <span> Punkte</span></p>
+                   <div class="podiumPlace"> 1 </div>
+                </div>
+                <div class="place"  id="p3">
+                   <p class="nameChar"> G </p>
+                   <p class="name"> Thomas Gruber</p>
+                   <p class="points"> 1.320 <span> Punkte</span></p>
+                   <div class="podiumPlace"> 3 </div>
+                </div>
+            </div>
+            <button type="button" class="startReturn-btn"> ZURÜCK</button>
+        </section>
+    </main>
+    <script src="./js/app.js"></script>
+</body>
+</html>
